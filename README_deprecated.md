@@ -90,128 +90,34 @@ The raw content of the request would be like this, a TOKEN filed will be added i
 <img src="_static/http_raw.jpg" width="30%" />
 
 
-## 3.JSON Command Format(supported since v9.96 firmware)
+## 3.Command Format(deprecated, but still supported)
 
-### 3.1 Read Device Status (For all kinds of devices)
+### 3.1 Read Door Status(deprecated)
 
-| Brief | Get device status, this is a general command for different types of devices. | 
-|-------|:---|
-| HTTP URL | http://tailwind-30aea4801880.local/json |
-| HTTP Method | POST | 
-| JSON Data |     {<br>  "version": "0.1",<br>"data": {<br>"type": "get",<br>"name": “dev_st"<br>}<br>} |
-| Response | iQ3 device response: <br> {"result": "OK","product": "iQ3","dev_id": "_30_ae_a4_80_18_80_","proto_ver": "0.1","door_num": 3,"night_mode_en": 0,"fw_ver": "9.94","data": {"door1": {"status": "open","lockup": 0,"enabled": 0},"door2": {"status": "close","lockup": 0,"enabled": 0},"door3": {"status": "close","lockup": 0,"enabled": 0}}} <br><br>Light device response:<br>{"result": "OK","product": "light","dev_id": "_30_ae_a4_80_18_80_","proto_ver": "0.1","pwm_channel": 1,"fw_ver": "9.03","data": {“mode":"auto","light": {"power": 29,"frequency": 5000,},"radar": {"distance": 15,"lux": 1000,"delay": 300}}}<br><br>Fail: <br>{"result": “Fail","message":"xxxxxx"} <br>|
-| Device Action | Return current device status in JSON format.|
-|CURL example | curl http://tailwind-30aea4801880.local/json -d '{"version": "0.1", "data": {"type": "get", "name": "dev_st"}}' -H "TOKEN:869769" |
+<img src="_static/read_legacy.jpg" width="50%" />
 
-| Key | Value | Example | Brief |
-| --  | ---   | ---     | ---   |
-| version | string | "0.1" | JSON protocol version number, 0.1 for current version, reserved for future useage |
-| data | JSON object | | |
-| type | string | "get" | get: read <br> set: write <br> |
-| name | string | "dev_set" | Read device status |
+> When sending commands to local control HTTP server, a field of TOKEN should be added in the HTTP request HEADER. 
+
+> Local control key can be updated on website(web.tailwind.com), after refreshing the key, a command will be sent to device to update the TOKEN accordingly.
 
 
-### 3.2 Set Status Report URL (For all kinds of devices)
-
-When device status changes, it can send report or notification to an HTTP or UDP server in local network.(Check 3.1 for the status report data format)<br>
-Use this API to set the notification URL.
-
-| Brief | Set Door Status Report Address|
-| -- | :-- |
-| HTTP URL | http://tailwind-30aea4801880.local/json |  
-| HTTP Method | POST |
-| JSON Data | {<br>"product": "iQ3",<br>"version": "0.1"<br>"data": {<br>"type": "set",<br>"name": "notify_url",<br>"value": {<br>"url": “http://192.168.1.1:8888/report”,<br>"proto": "http",<br>"enable": 1,<br>}<br>}<br>}<br>|
-| Response | {"result": "OK"}<br><br>{"result": "Fail", "Info": "xxxxxx"}<br> |
-| Device Action | Set how the device should report door status when door status changed.
-HTTP server and UDP server can either be supported now.|
-| CURL example |HTTP:<br>curl http://tailwind-30aea4801880.local/json -d '{"product": "iQ3", "version": "0.1", "data": {"type": "set", "name": "notify_url", "value": {"enable": 1,"proto":"http", "url":"http://192.168.3.61:8888/test"}}}' -H "TOKEN:869769"<br><br>UDP:<br>curl http://tailwind-30aea4801880.local/json -d '{"product": "iQ3", "version": "0.1", "data": {"type": "set", "name": "notify_url", "value": {"enable": 1,"proto":"udp", "url":"192.168.3.61:8888"}}}' -H "TOKEN:869769"<br>|
-
-| Key | Value | Example | Brief |
-| --  | ---   | ---     | ---   |
-| product | string | "iQ3" | iQ3:Garage door opener device <br>Light: Light Controller device <br>|
-| version | string | "0.1" | JSON protocol version number, 0.1 for current version, reserved for future useage |
-| data | JSON object | | |
-| type | string | "set" | get: read <br> set: write <br> |
-| name | string | "notify_url" | Set device notification method |
-| value | JSON object | | |
-| url | string | HTTP:<br>"http://192.168.1.1:8888/report" <br>or<br>UDP:<br>"192.168.1.1:6888"| UDP or HTTP URL for device to report its status. The length should be less than 200 bytes.|
-| proto | string | "http" or "udp" | http: send status report in HTTP<br>udp: send status report in UDP<br>|
-|enable | integer | 1 | 1: enable status report<br>0: disable status report<br>|
+Example:<br>
+request: <br>
+curl http://192.168.3.7/status -H "TOKEN:123456"<br>
+response: <br>
+0
 
 
-### 3.3 Open or Close Door Command (For iQ3 devices, supported since v9.96)
-
-| Brief | Open / Close Door Command | 
-|-------|:---|
-| HTTP URL | http://tailwind-30aea4801880.local/json |
-| HTTP Method | POST | 
-| JSON Data| {<br>"product": "iQ3",<br>"version": "0.1",<br>"data": {<br>"type": "set",<br>"name": "door_op",<br>"value": {<br>"door_idx": 1,<br>"cmd": "open",<br>}<br>}<br>}<br> |
-|Response| {"result": "OK"} <br>{"result": "Fail","message":"xxxxxx"}<br>|
-| Device Action| For open/close door command, if door is currently closed/open, trigger IO pulse to open/close the door.|
-| CURL example| open door: <br> curl http://tailwind-30aea4801880.local/json -d '{"product": "iQ3", "version": "0.1", "data": {"type": "set", "name": "door_op","value":{"door_idx":1, “cmd":"open"}}}' -H "TOKEN:869769"<br><br> close door: <br> curl http://tailwind-30aea4801880.local/json -d '{"product": "iQ3", "version": "0.1", "data": {"type": "set", "name": "door_op","value":{"door_idx":1, “cmd":"close"}}}' -H "TOKEN:869769"<br><br> partial open door: <br> curl http://tailwind-30aea4801880.local/json -d '{"product": "iQ3", "version": "0.1", "data": {"type": "set", "name": "door_op","value":{"door_idx":1, “cmd":"open", "partial_time": 15000}}}' -H "TOKEN:869769"<br>|
-
-| Key | Value | Example | Brief |
-| --  | ---   | ---     | ---   |
-| product | string | "iQ3" | iQ3:Garage door opener device <br>Light: Light Controller device <br>|
-| version | string | "0.1" | JSON protocol version number, 0.1 for current version, reserved for future useage |
-| data | JSON object | | |
-| type | string | "set" | get: read <br> set: write <br> |
-| name | string | "door_op" | Door Open/Close Operation |
-| value | JSON object | | |
-| door_idx | integer | 1 |0: door 1<br>1: door 2<br>2: door 3<br>|
-| cmd | string | "open" | “open”: open door<br>“close”: close door<br>|
-|partial_time| integer|15000|optional. Door partial open time (ms). Only work with open door command.|
-
-### 3.4 Set Status LED Brightness(For iQ3 device, supported since 9.96)
-
-> Now we can set the brightness of Green status LED which indicates the device is online.
-
-| Brief | Set Door Status LED Brightness | 
-|-------|:---|
-| HTTP URL | http://tailwind-30aea4801880.local/json |
-| HTTP Method | POST | 
-| JSON Data|     {<br>"product": "iQ3",<br>"version": "0.1"<br>"data": {<br>"type": "set",<br>"name": “status_led",<br>"value": {<br>“brightness": 100<br>}<br>}<br>}<br>|
-|Response|{"result": "OK"}<br>{"result": "Fail", "Info": "xxxxxx"}|
-|Device Action|Device will set the Green LED brightness after it gets online successfully.|
-|CURL example| curl http://tailwind-30aea4801880.local/json -d '{"product": "iQ3", "version": "0.1", "data": {"type": "set", "name": "status_led", "value": {"brightness": 100}}}' -H "TOKEN:869769"|
 
 
-| Key | Value | Example | Brief |
-| --  | ---   | ---     | ---   |
-| product | string | "iQ3" | iQ3:Garage door opener device <br>Light: Light Controller device <br>|
-| version | string | "0.1" | JSON protocol version number, 0.1 for current version, reserved for future useage |
-| data | JSON object | | |
-| type | string | "set" | get: read <br> set: write <br> |
-| name | string | "status_led" | Set status LED brightness |
-| value | JSON object | | |
-| brightness | integer | 100 | Brightness of the Green LED.ranges from 0 to 100.|
+### 3.1 Send Door Command(deprecated)
+<img src="_static/write_legacy.jpg" width="50%" />
 
-### 3.5 Set Light Parameters (For Light device)
+Example:
+request:<br>
+curl http://192.168.3.7/cmd -d 2 -H "TOKEN:1234567890"<br><br>
+response:<br>
+0
 
-> Use this to set different parameters of a Light Controller device.
-
-
-| Brief | Configure a Light Controller Device | 
-|-------|:---|
-| HTTP URL | http://tailwind-30aea4801880.local/json |
-| HTTP Method | POST | 
-| JSON Data|   {<br>"product":"light",<br>"version":"0.1",<br> "data":{<br>"type":"set",<br>"name":"dev_op",<br>"value":{<br>"power":50,<br>"delay":300,<br>"lux":1000,<br>"distance":15,<br>"mode":"auto"<br>}<br>}<br>}|
-|Response|{"result": "OK"}<br>{"result": "Fail", "Info": "xxxxxx"}|
-|Device Action|Device will parse each give parameters and apply those given parameters.|
-|CURL example| curl http://tailwind-30aea4801880.local/json -d '{"product":"light","version":"0.1", "data":{"type":"set","name":"dev_op","value":{"power":50,"delay":300,"lux":1000,"distance":15,"mode":"auto"}}}' -H "TOKEN:869769"<br><br>curl http://tailwind-30aea4801880.local/json -d '{"product":"light","version":"0.1", "data":{"type":"set","name":"dev_op","value":{"power":50, "mode":"manual"}}}' -H "TOKEN:869769"|
-
-
-| Key | Value | Example | Brief |
-| --  | ---   | ---     | ---   |
-| product | string | "light" | light: Light Controller device <br>|
-| version | string | "0.1" | JSON protocol version number, 0.1 for current version, reserved for future useage |
-| data | JSON object | | |
-| type | string | "set" | get: read <br> set: write <br> |
-| name | string | "dev_op" | Set Light Controller Parameters |
-| value | JSON object | | |
-| power | integer | 50 | Set brightness of the Lightranges from 0 to 100.(optional).|
-| delay | integer | 300 | when motion detected, how long the light would be kept on, count in seconds.(0-65535)(optional)|
-| lux | integer | 1000 | when the ambient light is weaker than this level, radar sensor starts to work. ( 0 ~ 65535 Lux)(optional)|
-|distance | integer | 15 | sensitivity level of the radar sensor, ranges from 0 to 15)(optional)|
-|mode|string|"auto"|“manual": user sets light brightness, the light stays with the brightness no matter how the radar sensor reads.<br><br>“auto": user sets radar sensor parameters, the light will be controlled by the radar sensor signal(optional)|
-
+curl http://tailwind-30aea4801880.local/cmd -d -4 -H "TOKEN:1234567890"
+OK
