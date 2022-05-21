@@ -114,7 +114,7 @@ The raw content of the request would be like this, a TOKEN filed will be added i
 ### 3.2 Set Status Report URL (For all kinds of devices)
 
 When device status changes, it can send report or notification to an HTTP or UDP server in local network.(Check 3.1 for the status report data format)<br>
-Use this API to set the notification URL.(HTTPS not supported yet.)
+Use this API to set the notification URL.
 
 | Brief | Set Door Status Report Address|
 | -- | :-- |
