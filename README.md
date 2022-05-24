@@ -2,18 +2,18 @@
 
 > Latest implementation in v9.97 firmware
 
-There is a HTTP server running on the Tailwind Garage Door Opener iQ3, so that we can send HTTP request to the specific URLs to write command to or read status from the HTTP server.(Currently, local network control is under beta test stage. More security feature would be involved in later versions.)
+There is a HTTP server running on the Tailwind iQ3 Garage Door Opener so we can send HTTP requests to the specific URLs to write or send commands or read the status from the HTTP server.(Currently, local network control is under beta test stage. More security features would be involved in later versions.)
 
 
-In order to get it work, we need the following several steps: <br>
-1.Find devices in local network <br>
+In order to get it work, we need the following steps: <br>
+1.Find devices in the local network <br>
 2.Read device basic information.(Model ID, FW version )
-3. Then read device status or send control commands to device.
+3. Read device status or send control commands to the device.
 
 
 ## 1. Find devices in local network
 
-In current solution, we can use mDNS to search local devices.<br>
+In the current solution, we can use mDNS to search for local devices.<br>
 <img src="_static/_http_tcp.jpg" width="30%" />
 
 #### a. We will find TW-WebServer service under _http._tcp services.
@@ -49,7 +49,7 @@ Timestamp     A/R    Flags if Hostname                               Address    
 
 <img src="_static/app_dev_id.jpg" width="30%" />
 
-We can find device IP address and MAC in tailwind App, then build the device address like this:<br>
+We can find the device IP address and MAC in the Tailwind App, then build the device address like this:<br>
 MAC: 30:ae:a4:80:18:80 <br>
 Device Address in local network: tailwind-30aea4801880.local <br>
 IP Address: 192.168.3.7
@@ -62,14 +62,14 @@ Examples:
 | 0A:BB:CC:0D:EE:DD | \_a_bb_cc_d_ee_dd_ | tailwind-0abbcc0deedd.local |
 
 After this step, we will get the device address in 2 style:<br>
-IP Address, e.g. 192.168.3.7 (this might be faster, but IP address could also change) <br>
+IP Address, e.g. 192.168.3.7 (this might be faster, but the IP address could also change) <br>
 Local link domain, e.g. tailwind-xxxxxxxxxxxx.local
 
 ## 2. TOKEN
 
-> In latest version of device firmware(v9.96 and above), we've added a Token in local control interface for security concern. 
+> In the latest version of device firmware(v9.96 and above), we've added a Token in the local control interface for security reasons. 
 
-The TOKEN is a 6-digit string(local control key) generated via Tailwind server
+The TOKEN is a 6-digit string(local control key) generated via the Tailwind server
 
 
 Steps to find and update Local Control Key:     
@@ -113,7 +113,7 @@ The raw content of the request would be like this, a TOKEN filed will be added i
 
 ### 3.2 Set Status Report URL (For all kinds of devices)
 
-When device status changes, it can send report or notification to an HTTP or UDP server in local network.(Check 3.1 for the status report data format)<br>
+When device status changes, it can send a report or notification to an HTTP or UDP server in the local network.(Check 3.1 for the status report data format)<br>
 Use this API to set the notification URL.(HTTPS not supported yet.)
 
 | Brief | Set Door Status Report Address|
@@ -164,7 +164,7 @@ HTTP server and UDP server can either be supported now.|
 
 ### 3.4 Set Status LED Brightness(For iQ3 device, supported since 9.96)
 
-> Now we can set the brightness of Green status LED which indicates the device is online.
+> Now we can set the brightness of Green status LED that indicates the device is online.
 
 | Brief | Set Door Status LED Brightness | 
 |-------|:---|
