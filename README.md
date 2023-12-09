@@ -99,7 +99,7 @@ The raw content of the request would be like this, a TOKEN filed will be added i
 | HTTP URL | http://tailwind-30aea4801880.local/json |
 | HTTP Method | POST | 
 | JSON Data |     {<br>  "version": "0.1",<br>"data": {<br>"type": "get",<br>"name": "dev_st"<br>}<br>} |
-| Response | iQ3 device response: <br> {"result": "OK","product": "iQ3","dev_id": "_30_ae_a4_80_18_80_","proto_ver": "0.1","door_num": 3,"night_mode_en": 0,"fw_ver": "9.94","data": {"door1": {"status": "open","lockup": 0,"enabled": 0},"door2": {"status": "close","lockup": 0,"enabled": 0},"door3": {"status": "close","lockup": 0,"enabled": 0}}} <br><br>Light device response:<br>{"result": "OK","product": "light","dev_id": "_30_ae_a4_80_18_80_","proto_ver": "0.1","pwm_channel": 1,"fw_ver": "9.03","data": {"mode":"auto","light": {"power": 29,"frequency": 5000 },"radar": {"distance": 15,"lux": 1000,"delay": 300}}}<br><br>Fail: <br>{"result": "Fail","message":"xxxxxx"} <br>|
+| Response | iQ3 device response: <br> {"result": "OK","product": "iQ3","dev_id": "_30_ae_a4_80_18_80_","proto_ver": "0.2","door_num": 3,"night_mode_en": 0,"fw_ver": “10.10","led_brightness": 10,"data": {"door1": {"index": 0,"status": "open","lockup": 0,"disabled": 0},"door2": {"index": 1,"status": "close","lockup": 0,"disabled": 0},"door3": {"index": 2,"status": "close","lockup": 0,"disabled": 0}}} <br><br>Light device response:<br>{"result": "OK","product": "light","dev_id": "_30_ae_a4_80_18_80_","proto_ver": "0.1","pwm_channel": 1,"fw_ver": "9.03","data": {"mode":"auto","light": {"power": 29,"frequency": 5000 },"radar": {"distance": 15,"lux": 1000,"delay": 300}}}<br><br>Fail: <br>{"result": "Fail","message":"xxxxxx"} <br>|
 | Device Action | Return current device status in JSON format.|
 |CURL example | curl http://tailwind-30aea4801880.local/json -d '{"version": "0.1", "data": {"type": "get", "name": "dev_st"}}' -H "TOKEN:869769" |
 
@@ -138,6 +138,15 @@ HTTP server and UDP server can either be supported now.|
 | proto | string | "http" or "udp" | http: send status report in HTTP<br>udp: send status report in UDP<br>|
 |enable | integer | 1 | 1: enable status report<br>0: disable status report<br>|
 
+The payload of a device notification message would like this:<br>
+The JSON object with key named 'notify' is the notification event, it indicates with door's status has changed.<br>
+Others are the current status of the device<br><br>
+
+{"result": "OK","product": "iQ3","dev_id": "_30_ae_a4_80_18_80_","proto_ver": "0.1","door_num": 3,"night_mode_en": 1,"fw_ver": "10.10","led_brightness": 10,"data": {"door1": {"index": 0,"status": "close","lockup": 0,"disabled": 0}
+,"door2": {"index": 1,"status": "open","lockup": 0,"disabled": 0}
+,"door3": {"index": 2,"status": "close","lockup": 0,"disabled": 0}
+},<br><font size="4" color="red">"notify": {"door_idx": 2,"event": "open"}</font>
+}
 
 ### 3.3 Open or Close Door Command (For iQ3 devices, supported since v9.96)
 
@@ -214,4 +223,30 @@ HTTP server and UDP server can either be supported now.|
 | lux | integer | 1000 | when the ambient light is weaker than this level, radar sensor starts to work. ( 0 ~ 65535 Lux)(optional)|
 |distance | integer | 15 | sensitivity level of the radar sensor, ranges from 0 to 15)(optional)|
 |mode|string|"auto"|"manual": user sets light brightness, the light stays with the brightness no matter how the radar sensor reads.<br><br>"auto": user sets radar sensor parameters, the light will be controlled by the radar sensor signal(optional)|
+
+
+
+### 3.6 Identify device (supported since v10.10 firmware)
+
+> Use this to identify an iQ3 device. The selected device would blink the white light three times.
+
+
+| Brief | To identify a Device | 
+|-------|:---|
+| HTTP URL | http://tailwind-30aea4801880.local/json |
+| HTTP Method | POST | 
+| JSON Data|       {<br>"product": "iQ3",<br>"version": "0.2"<br>"data": {<br>"type": "set",<br>"name": “identify"<br>}<br>}|
+|Response|{"result": "OK"}<br>{"result": "Fail", "Info": "xxxxxx"}|
+|Device Action|Device will blink the white led thress times.|
+|CURL example| curl http://tailwind-30aea4801880.local/json -d '{"product": "iQ3", "version": “0.2", "data": {"type": "set", "name": "identify"}}' -H "TOKEN:869769"|
+
+
+| Key | Value | Example | Brief |
+| --  | ---   | ---     | ---   |
+| product | string | "iQ3" | iQ3:Garage door opener device <br>Light: Light Controller device <br>|
+| version | string | "0.2" | JSON protocol version number, 0.2 for current version, reserved for future useage |
+| data | JSON object | | |
+| type | string | "set" | get: read <br> set: write <br> |
+| name | string | "identify" | To identify the device |
+
 
