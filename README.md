@@ -148,6 +148,17 @@ Others are the current status of the device<br><br>
 },<br><font size="4" color="red">"notify": {"door_idx": 2,"event": "open"}</font>
 }
 
+Currently supported events are: 
+| Event | Description |
+|-------|:---|
+| open | Door opened |
+| close | Door closed |
+| lock | Door lockup |
+| enable | Door enabled |
+| disable | Door disabled |
+| reboot | Device rebooted after receiving a reboot command|
+
+
 ### 3.3 Open or Close Door Command (For iQ3 devices, supported since v9.96)
 
 | Brief | Open / Close Door Command | 
