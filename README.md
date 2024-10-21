@@ -182,6 +182,8 @@ Currently supported events are:
 | cmd | string | "open" | "open”: open door<br>"close”: close door<br>|
 |partial_time| integer|15000|optional. Door partial open time (ms). Only work with open door command.|
 
+> Note: if door status changed due to the command, a FCM notification will be sent to the phone app with the following format: <br><br> Local Network Control opened/closed xxx(Devcie Name) yyy(Door Name) on ddd(Date) at ttt(Time)
+
 ### 3.4 Set Status LED Brightness(For iQ3 device, supported since 9.96)
 
 > Now we can set the brightness of Green status LED that indicates the device is online.
@@ -282,5 +284,4 @@ Currently supported events are:
 | data | JSON object | | |
 | type | string | "set" | get: read <br> set: write <br> |
 | name | string | "reboot" | To reboot the device |
-
 
