@@ -99,7 +99,7 @@ The raw content of the request would be like this, a TOKEN filed will be added i
 | HTTP URL | http://tailwind-30aea4801880.local/json |
 | HTTP Method | POST | 
 | JSON Data |     {<br>  "version": "0.1",<br>"data": {<br>"type": "get",<br>"name": "dev_st"<br>}<br>} |
-| Response | iQ3 device response: <br> {"result": "OK","product": "iQ3","dev_id": "_30_ae_a4_80_18_80_","proto_ver": "0.2","door_num": 3,"night_mode_en": 0,"fw_ver": “10.10","led_brightness": 10, "router_rssi": -31, "data": {"door1": {"index": 0,"status": "open","lockup": 0,"disabled": 0},"door2": {"index": 1,"status": "close","lockup": 0,"disabled": 0},"door3": {"index": 2,"status": "close","lockup": 0,"disabled": 0}}} <br><br>Light device response:<br>{"result": "OK","product": "light","dev_id": "_30_ae_a4_80_18_80_","proto_ver": "0.1","pwm_channel": 1,"fw_ver": "9.03","data": {"mode":"auto","light": {"power": 29,"frequency": 5000 },"radar": {"distance": 15,"lux": 1000,"delay": 300}}}<br><br>Fail: <br>{"result": "Fail","message":"xxxxxx"} <br>|
+| Response | iQ3 device response: <br> {"result": "OK","product": "iQ3","dev_id": "_30_ae_a4_80_18_80_","proto_ver": "0.2","door_num": 3,"night_mode_en": 0,"fw_ver": “10.10","led_brightness": 10, "router_rssi": -31, "data": {"door1": {"index": 0,"status": "open","lockup": 0,"disabled": 0},"door2": {"index": 1,"status": "close","lockup": 0,"disabled": 0},"door3": {"index": 2,"status": "close","lockup": 0,"disabled": 0}}} <br><br>Light device response:<br>{"result": "OK","product": "light","dev_id": "_30_ae_a4_80_18_80_","proto_ver": "0.1","pwm_channel": 1,"fw_ver": "9.03","data": {"mode":"auto","light": {"power": 29,"frequency": 5000 },"radar": {"distance": 15,"lux": 1000,"delay": 300}}}<br><br>Fail: <br>{"result": "Fail","info":"xxxxxx"} <br>|
 | Device Action | Return current device status in JSON format.|
 |CURL example | curl http://tailwind-30aea4801880.local/json -d '{"version": "0.1", "data": {"type": "get", "name": "dev_st"}}' -H "TOKEN:869769" |
 
@@ -166,7 +166,7 @@ Currently supported events are:
 | HTTP URL | http://tailwind-30aea4801880.local/json |
 | HTTP Method | POST | 
 | JSON Data| {<br>"product": "iQ3",<br>"version": "0.1",<br>"data": {<br>"type": "set",<br>"name": "door_op",<br>"value": {<br>"door_idx": 1,<br>"cmd": "open",<br>}<br>}<br>}<br> |
-|Response| {"result": "OK"} <br>{"result": "Fail","message":"xxxxxx"}<br>|
+|Response| {"result": "OK"} <br>{"result": "Fail","info":"xxxxxx"}<br>|
 | Device Action| For open/close door command, if door is currently closed/open, trigger IO pulse to open/close the door.|
 | CURL example| open door: <br> curl http://tailwind-30aea4801880.local/json -d '{"product": "iQ3", "version": "0.1", "data": {"type": "set", "name": "door_op","value":{"door_idx":1, "cmd":"open"}}}' -H "TOKEN:869769"<br><br> close door: <br> curl http://tailwind-30aea4801880.local/json -d '{"product": "iQ3", "version": "0.1", "data": {"type": "set", "name": "door_op","value":{"door_idx":1, "cmd":"close"}}}' -H "TOKEN:869769"<br><br> partial open door: <br> curl http://tailwind-30aea4801880.local/json -d '{"product": "iQ3", "version": "0.1", "data": {"type": "set", "name": "door_op","value":{"door_idx":1, "cmd":"open", "partial_time": 15000}}}' -H "TOKEN:869769"<br>|
 
