@@ -108,7 +108,7 @@ The raw content of the request would be like this, a TOKEN filed will be added i
 | version | string | "0.1" | JSON protocol version number, 0.1 for current version, reserved for future useage |
 | data | JSON object | | |
 | type | string | "get" | get: read <br> set: write <br> |
-| name | string | "dev_set" | Read device status |
+| name | string | "dev_st" | Read device status |
 
 
 ### 3.2 Set Status Report URL (For all kinds of devices)
