@@ -99,7 +99,7 @@ The raw content of the request would be like this, a TOKEN filed will be added i
 | HTTP URL | http://tailwind-30aea4801880.local/json |
 | HTTP Method | POST | 
 | JSON Data |     {<br>  "version": "0.1",<br>"data": {<br>"type": "get",<br>"name": "dev_st"<br>}<br>} |
-| Response | iQ3 device response: <br> {"result": "OK","product": "iQ3","dev_id": "_30_ae_a4_80_18_80_","proto_ver": "0.2","door_num": 3,"night_mode_en": 0,"fw_ver": “10.10","led_brightness": 10, "router_rssi": -31, "data": {"door1": {"index": 0,"status": "open","lockup": 0,"disabled": 0},"door2": {"index": 1,"status": "close","lockup": 0,"disabled": 0},"door3": {"index": 2,"status": "close","lockup": 0,"disabled": 0}}} <br><br>Light device response:<br>{"result": "OK","product": "light","dev_id": "_30_ae_a4_80_18_80_","proto_ver": "0.1","pwm_channel": 1,"fw_ver": "9.03","data": {"mode":"auto","light": {"power": 29,"frequency": 5000 },"radar": {"distance": 15,"lux": 1000,"delay": 300}}}<br><br>Fail: <br>{"result": "Fail","info":"xxxxxx"} <br>|
+| Response | iQ3 device response: <br> {"result": "OK","product": "iQ3","dev_id": "_30_ae_a4_80_18_80_","proto_ver": "0.2","door_num": 3,"night_mode_en": 0,"fw_ver": “10.10","led_brightness": 10, "router_rssi": -31, "server_monitor": false, "data": {"door1": {"index": 0,"status": "open","lockup": 0,"disabled": 0},"door2": {"index": 1,"status": "close","lockup": 0,"disabled": 0},"door3": {"index": 2,"status": "close","lockup": 0,"disabled": 0}}} <br><br>Light device response:<br>{"result": "OK","product": "light","dev_id": "_30_ae_a4_80_18_80_","proto_ver": "0.1","pwm_channel": 1,"fw_ver": "9.03","data": {"mode":"auto","light": {"power": 29,"frequency": 5000 },"radar": {"distance": 15,"lux": 1000,"delay": 300}}}<br><br>Fail: <br>{"result": "Fail","info":"xxxxxx"} <br>|
 | Device Action | Return current device status in JSON format.|
 |CURL example | curl http://tailwind-30aea4801880.local/json -d '{"version": "0.1", "data": {"type": "get", "name": "dev_st"}}' -H "TOKEN:869769" |
 
@@ -251,7 +251,7 @@ Currently supported events are:
 | JSON Data|       {<br>"product": "iQ3",<br>"version": "0.2"<br>"data": {<br>"type": "set",<br>"name": “identify"<br>}<br>}|
 |Response|{"result": "OK"}<br>{"result": "Fail", "Info": "xxxxxx"}|
 |Device Action|Device will blink the white led thress times.|
-|CURL example| curl http://tailwind-30aea4801880.local/json -d '{"product": "iQ3", "version": “0.2", "data": {"type": "set", "name": "identify"}}' -H "TOKEN:869769"|
+|CURL example| curl http://tailwind-30aea4801880.local/json -d '{"product": "iQ3", "version": "0.2", "data": {"type": "set", "name": "identify"}}' -H "TOKEN:869769"|
 
 
 | Key | Value | Example | Brief |
@@ -271,10 +271,10 @@ Currently supported events are:
 |-------|:---|
 | HTTP URL | http://tailwind-30aea4801880.local/json |
 | HTTP Method | POST | 
-| JSON Data|       {<br>"product": "iQ3",<br>"version": "0.2"<br>"data": {<br>"type": "set",<br>"name": reboot"<br>}<br>}|
+| JSON Data|       {<br>"product": "iQ3",<br>"version": "0.2"<br>"data": {<br>"type": "set",<br>"name": "reboot"<br>}<br>}|
 |Response|{"result": "OK"}<br>{"result": "Fail", "Info": "xxxxxx"}|
 |Device Action|Device will reboot in about 2 seconds.|
-|CURL example| curl http://tailwind-30aea4801880.local/json -d '{"product": "iQ3", "version": “0.2", "data": {"type": "set", "name": "reboot"}}' -H "TOKEN:869769"|
+|CURL example| curl http://tailwind-30aea4801880.local/json -d '{"product": "iQ3", "version": "0.2", "data": {"type": "set", "name": "reboot"}}' -H "TOKEN:869769"|
 
 
 | Key | Value | Example | Brief |
@@ -285,3 +285,31 @@ Currently supported events are:
 | type | string | "set" | get: read <br> set: write <br> |
 | name | string | "reboot" | To reboot the device |
 
+
+### 3.8 Disable server connection monitoring (supported since v10.61 firmware)
+
+> Use this to enable or disable server connection monitoring task on an iQ3 device. 
+
+> For most cases with internet access, the device would connect to MQTT server to keep remote services available. Sometimes unexpected errors might occur with the internet, which could cause the device lose connection with MQTT server, the device would try to cure the connection by rebooting itself automatically. 
+    
+> If users want to use iQ3 in a local network without internet access, this API can be use to disable the server connection monitoring feature, so the device would never reboot itself even if there is no internet access.
+
+| Brief | To identify a Device | 
+|-------|:---|
+| HTTP URL | http://tailwind-30aea4801880.local/json |
+| HTTP Method | POST | 
+| JSON Data|       {<br>"product": "iQ3",<br>"version": "0.2"<br>"data": {<br>"type": "set",<br>"name": "server_monitor",<br>"value": {<br>"enable": true<br>}<br>}<br>}|
+|Response|{"result": "OK"}<br>{"result": "Fail", "Info": "xxxxxx"}|
+|Device Action|Enable or disable server connection monitoring on device|
+|CURL example| curl http://tailwind-30aea4801880.local/json -d '{"product": "iQ3", "version": "0.2", "data": {"type": "set", "name": "server_monitor", "value": {"enable": true}}}' -H "TOKEN:869769"|
+
+
+| Key | Value | Example | Brief |
+| --  | ---   | ---     | ---   |
+| product | string | "iQ3" | iQ3:Garage door opener device <br>Light: Light Controller device <br>|
+| version | string | "0.2" | JSON protocol version number, 0.2 for current version, reserved for future useage |
+| data | JSON object | | |
+| type | string | "set" | get: read <br> set: write <br> |
+| name | string | "server_monitor" | Enable or disable server connection monitoring |
+| value | JSON object | | |
+| enable | bool | true (or flase) | enable (or disable) server connection monitoring.|
